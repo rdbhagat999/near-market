@@ -37,12 +37,14 @@ export class FungibleToken {
     this.created_at = created_at;
   }
 
+  // private method to transfer funds to reciever address
   private static transfer_funds(transferTo: AccountId, funds: Amount): void {
     logging.log(`transferring ${funds} yN to ${transferTo}`);
     const beneficiary = ContractPromiseBatch.create(transferTo);
     beneficiary.transfer(funds);
   }
 
+  // private method used by buy_fungible_token(item: Item): FungibleToken {}
   private static create_fungible_token(
     item: Item,
     blockTimestamp: string
@@ -56,10 +58,12 @@ export class FungibleToken {
     return new FungibleToken(item, attachedDepositInYoctoNear, blockTimestamp);
   }
 
+  // private method that returns a string
   public static get_info(): string {
     return message;
   }
 
+  // public method to fetch a list of fungible token by id
   public static getFTListByAccountId(accountId: AccountId): FungibleToken[] {
     assert(
       accountId.length > 0,
@@ -72,6 +76,7 @@ export class FungibleToken {
     return isSender ? ft_uMap.getSome(accountId) : [];
   }
 
+  // public method to buy a fungible token
   @mutateState()
   public static buy_fungible_token(item: Item): FungibleToken {
     const sender = context.sender;
@@ -120,6 +125,7 @@ export class FungibleToken {
     return ft;
   }
 
+  // private method used by sell_fungible_token(ft: FungibleToken): void {} to calculate selling price of a fungible token
   private static calculateSellPrice(price: Amount): Amount {
     // let itemPriceInYoctoNear = u128.mul(price, u128.fromF32(2));
     let itemPriceInYoctoNear = price;
