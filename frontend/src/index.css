@@ -1,0 +1,122 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;700&display=swap");
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: Poppins, sans-serif;
+  background-color: #f7f7f7;
+}
+
+body {
+  margin: 0 1rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  border-bottom: solid 1px;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+}
+.nav .left-nav {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  flex-direction: column;
+}
+.nav .right-nav {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  flex-direction: column;
+  width: 50%;
+}
+
+.btn {
+  background-color: #4caf50;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  border-radius: 10px;
+  width: 100%;
+}
+
+/* TokenList component */
+.popular-nfts-heading {
+  padding: 0 1rem;
+  margin: 1rem 0;
+}
+.popular-nfts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  row-gap: 2rem;
+  column-gap: 1rem;
+  margin: 1rem 0 2rem;
+}
+
+/* Token component */
+.nft-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+  border: 1px solid #e0e0e0;
+  border-radius: 1rem;
+  max-width: 524px;
+  width: 100%;
+}
+
+.nft-card img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 1rem;
+}
+.nft-card h2 {
+  font-size: 0.9rem;
+}
+.nft-card P {
+  font-size: 0.85rem;
+}
+.nft-card a {
+  display: block;
+  width: 100%;
+}
+.nft-card .description {
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  width: 100%;
+}
+.nft-card .buy-button {
+  background-color: #ff8c00;
+}
+
+@media screen and (min-width: 768px) {
+  .nav .left-nav {
+    align-items: start;
+    flex-direction: row;
+    width: 20%;
+  }
+  .nav .right-nav {
+    align-items: start;
+    flex-direction: row;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  nav {
+    font-size: 1rem;
+  }
+}
+
+@media screen and (min-width: 1240px) {
+  .nav .left-nav {
+    width: 15%;
+  }
+}
