@@ -10,7 +10,7 @@ import {
 
 export const message = "This is the near protocol smart contract tutorial.";
 
-// ft_set = {"accountId-tokenId"}
+// ft_set = {"accountId-id"}
 const ft_set = new PersistentSet<string>("s");
 
 // ft_uMap = {"accountId": FungibleToken[]}
@@ -71,8 +71,8 @@ export class FungibleToken {
     );
     logging.log(`fetching fts owned by ${accountId}`);
 
+    // check if sender has any fungible token
     const isSender = ft_uMap.contains(accountId);
-
     return isSender ? ft_uMap.getSome(accountId) : [];
   }
 
@@ -90,6 +90,7 @@ export class FungibleToken {
 
     logging.log(`ft_set.values() ${ft_set.values().toString()}`);
 
+    // check if sender is not empty string
     assert(
       sender.length > 0,
       "Sender is required, put your account ID as sender!"
@@ -100,12 +101,18 @@ export class FungibleToken {
 
     logging.log(`hasBought ${hasBought}`);
 
+    // check if sender has already bought fungible token
     assert(!hasBought, `You have already bought this item.`);
 
     const ft = this.create_fungible_token(item, blockTimestamp);
 
     const isSender = ft_uMap.contains(sender);
 
+    /*
+      check if sender has any fungible token
+      - if yes then update the funcgibleToken array
+      - if no then create a new funcgibleToken array
+    */
     if (isSender) {
       const fts = ft_uMap.getSome(sender);
       fts.push(ft);
@@ -114,9 +121,11 @@ export class FungibleToken {
       ft_uMap.set(sender, [ft]);
     }
 
+    // update the persistentSet by adding the buyers address
     logging.log(`adding ${buyer_ft_id}`);
     ft_set.add(buyer_ft_id);
 
+    // transfer funds to the contract address
     this.transfer_funds(contractName, depositInYoctoNear);
 
     logging.log(`${sender} bought an ft from ${contractName}`);
@@ -151,6 +160,7 @@ export class FungibleToken {
 
     let seller_ft_id = `${seller}-${ft.item.id}`;
 
+    // check if seller has the fungible token to sell
     let sellerHasFT = ft_set.has(seller_ft_id);
     logging.log(`sellerHasFT ${sellerHasFT}`);
 
@@ -160,6 +170,9 @@ export class FungibleToken {
 
     const isSender = ft_uMap.contains(seller);
 
+    /*
+      if seller has fungible token then update the funcgibleToken array by removing the fungible token they are selling
+    */
     if (isSender) {
       const seller_fts = ft_uMap.getSome(seller);
       let updatedFTs = new Array<FungibleToken>();
@@ -177,9 +190,11 @@ export class FungibleToken {
       logging.log(`reset ft_map for ${seller}`);
     }
 
+    // update the persistentSet by removing the sellers address
     logging.log(`deleteing ${seller_ft_id}`);
     ft_set.delete(seller_ft_id);
 
+    // transfer funds to the seller address
     this.transfer_funds(seller, sellPriceInYoctoNear);
 
     logging.log(`${seller} sold an ft to ${buyer}`);
