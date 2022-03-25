@@ -10,7 +10,7 @@ import { toYocto } from "../utils";
 
 const accountId = "YOUR-NAME.testnet";
 
-let demoFT: MoviePoster;
+let demoposter: MoviePoster;
 
 const item: Item = {
   id: 111111,
@@ -22,7 +22,7 @@ const item: Item = {
 };
 
 beforeEach(() => {
-  demoFT = new MoviePoster(item, toYocto(14), "1646488298177");
+  demoposter = new MoviePoster(item, toYocto(14), "1646488298177");
 });
 
 describe("contract methods", () => {
@@ -31,15 +31,15 @@ describe("contract methods", () => {
   });
 
   it("[fetchMovieListByAccountId] should return length = 0", () => {
-    let fts = fetchMovieListByAccountId(accountId);
-    let ftLength = fts.length;
-    expect<i32>(ftLength).toBe(0);
+    let posters = fetchMovieListByAccountId(accountId);
+    let postersLength = posters.length;
+    expect<i32>(postersLength).toBe(0);
   });
 
-  it("[buyMoviePoster] should return an ft with id = 111111", () => {
+  it("[buyMoviePoster] should return an poster with id = 111111", () => {
     VMContext.setAttached_deposit(toYocto(7));
-    const ft: MoviePoster = buyMoviePoster(item);
-    expect(ft.item.id).toStrictEqual(item.id);
+    const poster: MoviePoster = buyMoviePoster(item);
+    expect(poster.item.id).toStrictEqual(item.id);
   });
 
   it("[fetchMovieListByAccountId] should return length = 2", () => {
@@ -51,101 +51,128 @@ describe("contract methods", () => {
     VMContext.setAttached_deposit(toYocto(14));
     buyMoviePoster(item);
 
-    let fts = fetchMovieListByAccountId(accountId);
-    let ftLength = fts.length;
-    expect<i32>(ftLength).toBe(2);
+    let posters = fetchMovieListByAccountId(accountId);
+    let postersLength = posters.length;
+    expect<i32>(postersLength).toBe(2);
   });
 
-  it("[sell_user_fungible_tokens] should return ft_length = 0 after buy:1/sell:1", () => {
+  it("[sell_user_fungible_tokens] should return poster_length = 0 after buy:1/sell:1", () => {
     VMContext.setSigner_account_id(accountId);
 
-    //buy 1st ft
+    //buy 1st poster
     VMContext.setAttached_deposit(toYocto(14));
     item.id = 111111;
     buyMoviePoster(item);
 
-    let fts = fetchMovieListByAccountId(accountId);
-    let ftLength = fts.length;
-    expect<i32>(ftLength).toBe(1, "length after buying 1st_ft should be 1");
+    let posters = fetchMovieListByAccountId(accountId);
+    let postersLength = posters.length;
+    expect<i32>(postersLength).toBe(
+      1,
+      "length after buying 1st_poster should be 1"
+    );
 
-    //sell 1st ft
+    //sell 1st poster
     VMContext.setAttached_deposit(toYocto(30));
-    demoFT.item.id = 111111;
-    sellMoviePoster(demoFT);
+    demoposter.item.id = 111111;
+    sellMoviePoster(demoposter);
 
-    fts = fetchMovieListByAccountId(accountId);
-    ftLength = fts.length;
-    expect<i32>(ftLength).toBe(0, "length after selling 1st_ft should be 0");
+    posters = fetchMovieListByAccountId(accountId);
+    postersLength = posters.length;
+    expect<i32>(postersLength).toBe(
+      0,
+      "length after selling 1st_poster should be 0"
+    );
   });
 
-  it("[sell_user_fungible_tokens] should return ft_length = 1 after buy:2/sell:1", () => {
+  it("[sell_user_fungible_tokens] should return poster_length = 1 after buy:2/sell:1", () => {
     VMContext.setSigner_account_id(accountId);
 
-    //buy 1st ft
+    //buy 1st poster
     VMContext.setAttached_deposit(toYocto(14));
     item.id = 111111;
     buyMoviePoster(item);
 
-    let fts = fetchMovieListByAccountId(accountId);
-    let ftLength = fts.length;
-    expect<i32>(ftLength).toBe(1, "length after buying 1st_ft should be 1");
+    let posters = fetchMovieListByAccountId(accountId);
+    let postersLength = posters.length;
+    expect<i32>(postersLength).toBe(
+      1,
+      "length after buying 1st_poster should be 1"
+    );
 
-    // buy 2nd ft
+    // buy 2nd poster
     VMContext.setAttached_deposit(toYocto(14));
     item.id = 222222;
     buyMoviePoster(item);
 
-    fts = fetchMovieListByAccountId(accountId);
-    ftLength = fts.length;
-    expect<i32>(ftLength).toBe(2, "length after buying 2nd_ft should be 2");
+    posters = fetchMovieListByAccountId(accountId);
+    postersLength = posters.length;
+    expect<i32>(postersLength).toBe(
+      2,
+      "length after buying 2nd_poster should be 2"
+    );
 
-    //sell 1st ft
+    //sell 1st poster
     VMContext.setAttached_deposit(toYocto(30));
     item.id = 111111;
-    sellMoviePoster(demoFT);
+    sellMoviePoster(demoposter);
 
-    fts = fetchMovieListByAccountId(accountId);
-    ftLength = fts.length;
-    expect<i32>(ftLength).toBe(1, "length after selling 1st_ft should be 1");
+    posters = fetchMovieListByAccountId(accountId);
+    postersLength = posters.length;
+    expect<i32>(postersLength).toBe(
+      1,
+      "length after selling 1st_poster should be 1"
+    );
   });
 
-  it("[sell_user_fungible_tokens] should return ft_length = 0 after buy:2/sell:2", () => {
+  it("[sell_user_fungible_tokens] should return poster_length = 0 after buy:2/sell:2", () => {
     VMContext.setSigner_account_id(accountId);
 
-    //buy 1st ft
+    //buy 1st poster
     VMContext.setAttached_deposit(toYocto(14));
     item.id = 111111;
     buyMoviePoster(item);
 
-    let fts = fetchMovieListByAccountId(accountId);
-    let ftLength = fts.length;
-    expect<i32>(ftLength).toBe(1, "length after buying 1st_ft should be 1");
+    let posters = fetchMovieListByAccountId(accountId);
+    let postersLength = posters.length;
+    expect<i32>(postersLength).toBe(
+      1,
+      "length after buying 1st_poster should be 1"
+    );
 
-    // buy 2nd ft
+    // buy 2nd poster
     VMContext.setAttached_deposit(toYocto(14));
     item.id = 222222;
     buyMoviePoster(item);
 
-    fts = fetchMovieListByAccountId(accountId);
-    ftLength = fts.length;
-    expect<i32>(ftLength).toBe(2, "length after buying 2nd_ft should be 2");
+    posters = fetchMovieListByAccountId(accountId);
+    postersLength = posters.length;
+    expect<i32>(postersLength).toBe(
+      2,
+      "length after buying 2nd_poster should be 2"
+    );
 
-    //sell 1st ft
+    //sell 1st poster
     VMContext.setAttached_deposit(toYocto(30));
     item.id = 111111;
-    sellMoviePoster(demoFT);
+    sellMoviePoster(demoposter);
 
-    fts = fetchMovieListByAccountId(accountId);
-    ftLength = fts.length;
-    expect<i32>(ftLength).toBe(1, "length after selling 1st_ft should be 1");
+    posters = fetchMovieListByAccountId(accountId);
+    postersLength = posters.length;
+    expect<i32>(postersLength).toBe(
+      1,
+      "length after selling 1st_poster should be 1"
+    );
 
-    //sell 2nd ft
+    //sell 2nd poster
     VMContext.setAttached_deposit(toYocto(30));
     item.id = 222222;
-    sellMoviePoster(demoFT);
+    sellMoviePoster(demoposter);
 
-    fts = fetchMovieListByAccountId(accountId);
-    ftLength = fts.length;
-    expect<i32>(ftLength).toBe(0, "length after selling 2nd_ft should be 0");
+    posters = fetchMovieListByAccountId(accountId);
+    postersLength = posters.length;
+    expect<i32>(postersLength).toBe(
+      0,
+      "length after selling 2nd_poster should be 0"
+    );
   });
 });

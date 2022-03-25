@@ -10,11 +10,11 @@ import {
 
 export const message = "This is the near protocol smart contract tutorial.";
 
-// ft_set = {"accountId-id"}
-const ft_set = new PersistentSet<string>("s");
+// poster_set = {"accountId-id"}
+const poster_set = new PersistentSet<string>("s");
 
-// ft_uMap = {"accountId": MoviePoster[]}
-let ft_uMap = new PersistentUnorderedMap<string, MoviePoster[]>("u");
+// poster_uMap = {"accountId": MoviePoster[]}
+let poster_uMap = new PersistentUnorderedMap<string, MoviePoster[]>("u");
 
 @nearBindgen
 export class Item {
@@ -69,11 +69,11 @@ export class MoviePoster {
       accountId.length > 0,
       "Sender is required, put your account ID as sender!"
     );
-    logging.log(`fetching fts owned by ${accountId}`);
+    logging.log(`fetching posters owned by ${accountId}`);
 
     // check if sender has any poster
-    const isSender = ft_uMap.contains(accountId);
-    return isSender ? ft_uMap.getSome(accountId) : [];
+    const isSender = poster_uMap.contains(accountId);
+    return isSender ? poster_uMap.getSome(accountId) : [];
   }
 
   // public method to buy a poster
@@ -88,7 +88,7 @@ export class MoviePoster {
 
     logging.log(`${contractName} is seller`);
 
-    logging.log(`ft_set.values() ${ft_set.values().toString()}`);
+    logging.log(`poster_set.values() ${poster_set.values().toString()}`);
 
     // check if sender is not empty string
     assert(
@@ -96,8 +96,8 @@ export class MoviePoster {
       "Sender is required, put your account ID as sender!"
     );
 
-    let buyer_ft_id = `${sender}-${item.id}`;
-    let hasBought = ft_set.has(buyer_ft_id);
+    let buyer_poster_id = `${sender}-${item.id}`;
+    let hasBought = poster_set.has(buyer_poster_id);
 
     logging.log(`hasBought ${hasBought}`);
 
@@ -106,7 +106,7 @@ export class MoviePoster {
 
     const ft = this.create_poster(item, blockTimestamp);
 
-    const isSender = ft_uMap.contains(sender);
+    const isSender = poster_uMap.contains(sender);
 
     /*
       check if sender has any poster
@@ -114,22 +114,22 @@ export class MoviePoster {
       - if no then create a new poster array
     */
     if (isSender) {
-      const fts = ft_uMap.getSome(sender);
-      fts.push(ft);
-      ft_uMap.set(sender, fts);
+      const posters = poster_uMap.getSome(sender);
+      posters.push(ft);
+      poster_uMap.set(sender, posters);
     } else {
-      ft_uMap.set(sender, [ft]);
+      poster_uMap.set(sender, [ft]);
     }
 
     // update the persistentSet by adding the buyers address
-    logging.log(`adding ${buyer_ft_id}`);
-    ft_set.add(buyer_ft_id);
+    logging.log(`adding ${buyer_poster_id}`);
+    poster_set.add(buyer_poster_id);
 
     // transfer funds to the contract address
     this.transfer_funds(contractName, depositInYoctoNear);
 
-    logging.log(`${sender} bought an ft from ${contractName}`);
-    logging.log(`ft_set.values() ${ft_set.values().toString()}`);
+    logging.log(`${sender} bought a poster from ${contractName}`);
+    logging.log(`poster_set.values() ${poster_set.values().toString()}`);
 
     return ft;
   }
@@ -152,52 +152,52 @@ export class MoviePoster {
       "Seller is required, put your account ID as seller!"
     );
 
-    logging.log(`ft_set.values() ${ft_set.values().toString()}`);
+    logging.log(`poster_set.values() ${poster_set.values().toString()}`);
 
     logging.log(`${buyer} is buyer`);
 
     logging.log(`${seller} is seller`);
 
-    let seller_ft_id = `${seller}-${ft.item.id}`;
+    let seller_movie_id = `${seller}-${ft.item.id}`;
 
     // check if seller has the poster to sell
-    let sellerHasFT = ft_set.has(seller_ft_id);
+    let sellerHasFT = poster_set.has(seller_movie_id);
     logging.log(`sellerHasFT ${sellerHasFT}`);
 
     assert(sellerHasFT, `You can only sell your own item.`);
 
     const sellPriceInYoctoNear = this.calculateSellPrice(ft.price);
 
-    const isSender = ft_uMap.contains(seller);
+    const isSender = poster_uMap.contains(seller);
 
     /*
       if seller has poster then update the poster array by removing the poster they are selling
     */
     if (isSender) {
-      const seller_fts = ft_uMap.getSome(seller);
-      let updatedFTs = new Array<MoviePoster>();
+      const seller_posters = poster_uMap.getSome(seller);
+      let updatedposters = new Array<MoviePoster>();
 
-      for (let i = 0; i < seller_fts.length; i++) {
-        if (seller_fts[i].item.id != ft.item.id) {
-          updatedFTs.push(seller_fts[i]);
+      for (let i = 0; i < seller_posters.length; i++) {
+        if (seller_posters[i].item.id != ft.item.id) {
+          updatedposters.push(seller_posters[i]);
         }
       }
 
-      ft_uMap.set(seller, updatedFTs);
+      poster_uMap.set(seller, updatedposters);
       logging.log(`updated ft_map for ${seller}`);
     } else {
-      ft_uMap.set(seller, []);
+      poster_uMap.set(seller, []);
       logging.log(`reset ft_map for ${seller}`);
     }
 
     // update the persistentSet by removing the sellers address
-    logging.log(`deleteing ${seller_ft_id}`);
-    ft_set.delete(seller_ft_id);
+    logging.log(`deleteing ${seller_movie_id}`);
+    poster_set.delete(seller_movie_id);
 
     // transfer funds to the seller address
     this.transfer_funds(seller, sellPriceInYoctoNear);
 
-    logging.log(`${seller} sold an ft to ${buyer}`);
-    logging.log(`ft_set.values() ${ft_set.values().toString()}`);
+    logging.log(`${seller} sold a poster to ${buyer}`);
+    logging.log(`poster_set.values() ${poster_set.values().toString()}`);
   }
 }
