@@ -45,7 +45,7 @@ export class MoviePoster {
   }
 
   // private method used by buy_movie_poster(item: Item): MoviePoster {}
-  private static create_fungible_token(
+  private static create_poster(
     item: Item,
     blockTimestamp: string
   ): MoviePoster {
@@ -63,7 +63,7 @@ export class MoviePoster {
     return message;
   }
 
-  // public method to fetch a list of fungible token by id
+  // public method to fetch a list of poster by id
   public static getMovieListByAccountId(accountId: AccountId): MoviePoster[] {
     assert(
       accountId.length > 0,
@@ -71,12 +71,12 @@ export class MoviePoster {
     );
     logging.log(`fetching fts owned by ${accountId}`);
 
-    // check if sender has any fungible token
+    // check if sender has any poster
     const isSender = ft_uMap.contains(accountId);
     return isSender ? ft_uMap.getSome(accountId) : [];
   }
 
-  // public method to buy a fungible token
+  // public method to buy a poster
   @mutateState()
   public static buy_movie_poster(item: Item): MoviePoster {
     const sender = context.sender;
@@ -101,17 +101,17 @@ export class MoviePoster {
 
     logging.log(`hasBought ${hasBought}`);
 
-    // check if sender has already bought fungible token
+    // check if sender has already bought poster
     assert(!hasBought, `You have already bought this item.`);
 
-    const ft = this.create_fungible_token(item, blockTimestamp);
+    const ft = this.create_poster(item, blockTimestamp);
 
     const isSender = ft_uMap.contains(sender);
 
     /*
-      check if sender has any fungible token
-      - if yes then update the funcgibleToken array
-      - if no then create a new funcgibleToken array
+      check if sender has any poster
+      - if yes then update the poster array
+      - if no then create a new poster array
     */
     if (isSender) {
       const fts = ft_uMap.getSome(sender);
@@ -134,7 +134,7 @@ export class MoviePoster {
     return ft;
   }
 
-  // private method used by sell_movie_poster(ft: MoviePoster): void {} to calculate selling price of a fungible token
+  // private method used by sell_movie_poster(ft: MoviePoster): void {} to calculate selling price of a poster
   private static calculateSellPrice(price: Amount): Amount {
     // let itemPriceInYoctoNear = u128.mul(price, u128.fromF32(2));
     let itemPriceInYoctoNear = price;
@@ -160,7 +160,7 @@ export class MoviePoster {
 
     let seller_ft_id = `${seller}-${ft.item.id}`;
 
-    // check if seller has the fungible token to sell
+    // check if seller has the poster to sell
     let sellerHasFT = ft_set.has(seller_ft_id);
     logging.log(`sellerHasFT ${sellerHasFT}`);
 
@@ -171,7 +171,7 @@ export class MoviePoster {
     const isSender = ft_uMap.contains(seller);
 
     /*
-      if seller has fungible token then update the funcgibleToken array by removing the fungible token they are selling
+      if seller has poster then update the poster array by removing the poster they are selling
     */
     if (isSender) {
       const seller_fts = ft_uMap.getSome(seller);
