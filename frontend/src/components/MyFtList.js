@@ -9,8 +9,8 @@ export default function MyFtList() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(false);
 
-  const handleSellFT = async (ft) => {
-    console.log("sellFungibleToken", ft);
+  const handleSellPoster = async (ft) => {
+    console.log("sellMoviePoster", ft);
 
     if (isSignedIn) {
       try {
@@ -18,7 +18,7 @@ export default function MyFtList() {
         ft.price = utils.format.parseNearAmount(`${ft.price}`);
         await window.walletConnection.account().functionCall({
           contractId: window.contractName,
-          methodName: "sellFungibleToken",
+          methodName: "sellMoviePoster",
           args: { ft },
           attachedDeposit: utils.format.parseNearAmount(
             "0.000000000000000000000001"
@@ -46,7 +46,7 @@ export default function MyFtList() {
 
       const fn = async () => {
         await window.contract
-          .fetchFungibleTokenListByAccountId({ accountId })
+          .fetchMovieListByAccountId({ accountId })
           .then((myFtsFromContract) => {
             const fts = myFtsFromContract.map((t) => {
               const amountInNEAR = utils.format.formatNearAmount(t.price);
@@ -76,7 +76,7 @@ export default function MyFtList() {
       <>
         <Navbar />
         <div>
-          <h3 className="popular-nfts-heading">My Fungible Tokens</h3>
+          <h3 className="popular-nfts-heading">My Movie Posters</h3>
           <div className="popular-nfts">
             <h2 style={{ textAlign: "center" }}>
               Fetching from blockchain ...
@@ -87,7 +87,7 @@ export default function MyFtList() {
     ) : (
       <>
         <Navbar />
-        <h3 className="popular-nfts-heading">My Fungible Tokens</h3>
+        <h3 className="popular-nfts-heading">My Movie Posters</h3>
         <div className="popular-nfts">
           {myFTs.length === 0 && (
             <h2 style={{ textAlign: "center" }}>Nothing to show here.</h2>
@@ -104,7 +104,7 @@ export default function MyFtList() {
               >
                 <button
                   className="btn buy-button"
-                  onClick={() => handleSellFT(ft)}
+                  onClick={() => handleSellPoster(ft)}
                 >
                   Sell
                 </button>

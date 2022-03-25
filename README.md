@@ -16,15 +16,15 @@ The example here is very basic. It's a simple contract demonstrating the followi
   public getProjectInfo(): string {}
 
   // [view method] returns an array of fungible tokens owned by an account
-  public fetchFungibleTokenListByAccountId(accountId: AccountId): FungibleToken[] {}
+  public fetchMovieListByAccountId(accountId: AccountId): MoviePoster[] {}
 
   // [change method] returns a fungible token bought by context.sender
   @mutateState()
-  public buyFungibleToken(item: Item): FungibleToken {}
+  public buyMoviePoster(item: Item): MoviePoster {}
 
   // [change method] called to sell a fungible token bought by context.sender
   @mutateState()
-  public sellFungibleToken(ft: FungibleToken): void {}
+  public sellMoviePoster(ft: MoviePoster): void {}
 ```
 
 ## Usage

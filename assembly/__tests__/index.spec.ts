@@ -1,16 +1,16 @@
 import { VMContext } from "near-sdk-as";
 import {
-  fetchFungibleTokenListByAccountId,
-  buyFungibleToken,
+  fetchMovieListByAccountId,
+  buyMoviePoster,
   getProjectInfo,
-  sellFungibleToken,
+  sellMoviePoster,
 } from "../index";
-import { FungibleToken, Item, message } from "../model";
+import { MoviePoster, Item, message } from "../model";
 import { toYocto } from "../utils";
 
 const accountId = "YOUR-NAME.testnet";
 
-let demoFT: FungibleToken;
+let demoFT: MoviePoster;
 
 const item: Item = {
   id: 111111,
@@ -22,7 +22,7 @@ const item: Item = {
 };
 
 beforeEach(() => {
-  demoFT = new FungibleToken(item, toYocto(14), "1646488298177");
+  demoFT = new MoviePoster(item, toYocto(14), "1646488298177");
 });
 
 describe("contract methods", () => {
@@ -30,28 +30,28 @@ describe("contract methods", () => {
     expect<string>(getProjectInfo()).toStrictEqual(message);
   });
 
-  it("[fetchFungibleTokenListByAccountId] should return length = 0", () => {
-    let fts = fetchFungibleTokenListByAccountId(accountId);
+  it("[fetchMovieListByAccountId] should return length = 0", () => {
+    let fts = fetchMovieListByAccountId(accountId);
     let ftLength = fts.length;
     expect<i32>(ftLength).toBe(0);
   });
 
-  it("[buyFungibleToken] should return an ft with id = 111111", () => {
+  it("[buyMoviePoster] should return an ft with id = 111111", () => {
     VMContext.setAttached_deposit(toYocto(7));
-    const ft: FungibleToken = buyFungibleToken(item);
+    const ft: MoviePoster = buyMoviePoster(item);
     expect(ft.item.id).toStrictEqual(item.id);
   });
 
-  it("[fetchFungibleTokenListByAccountId] should return length = 2", () => {
+  it("[fetchMovieListByAccountId] should return length = 2", () => {
     VMContext.setSigner_account_id(accountId);
     VMContext.setAttached_deposit(toYocto(14));
-    buyFungibleToken(item);
+    buyMoviePoster(item);
 
     item.id = 222222;
     VMContext.setAttached_deposit(toYocto(14));
-    buyFungibleToken(item);
+    buyMoviePoster(item);
 
-    let fts = fetchFungibleTokenListByAccountId(accountId);
+    let fts = fetchMovieListByAccountId(accountId);
     let ftLength = fts.length;
     expect<i32>(ftLength).toBe(2);
   });
@@ -62,18 +62,18 @@ describe("contract methods", () => {
     //buy 1st ft
     VMContext.setAttached_deposit(toYocto(14));
     item.id = 111111;
-    buyFungibleToken(item);
+    buyMoviePoster(item);
 
-    let fts = fetchFungibleTokenListByAccountId(accountId);
+    let fts = fetchMovieListByAccountId(accountId);
     let ftLength = fts.length;
     expect<i32>(ftLength).toBe(1, "length after buying 1st_ft should be 1");
 
     //sell 1st ft
     VMContext.setAttached_deposit(toYocto(30));
     demoFT.item.id = 111111;
-    sellFungibleToken(demoFT);
+    sellMoviePoster(demoFT);
 
-    fts = fetchFungibleTokenListByAccountId(accountId);
+    fts = fetchMovieListByAccountId(accountId);
     ftLength = fts.length;
     expect<i32>(ftLength).toBe(0, "length after selling 1st_ft should be 0");
   });
@@ -84,27 +84,27 @@ describe("contract methods", () => {
     //buy 1st ft
     VMContext.setAttached_deposit(toYocto(14));
     item.id = 111111;
-    buyFungibleToken(item);
+    buyMoviePoster(item);
 
-    let fts = fetchFungibleTokenListByAccountId(accountId);
+    let fts = fetchMovieListByAccountId(accountId);
     let ftLength = fts.length;
     expect<i32>(ftLength).toBe(1, "length after buying 1st_ft should be 1");
 
     // buy 2nd ft
     VMContext.setAttached_deposit(toYocto(14));
     item.id = 222222;
-    buyFungibleToken(item);
+    buyMoviePoster(item);
 
-    fts = fetchFungibleTokenListByAccountId(accountId);
+    fts = fetchMovieListByAccountId(accountId);
     ftLength = fts.length;
     expect<i32>(ftLength).toBe(2, "length after buying 2nd_ft should be 2");
 
     //sell 1st ft
     VMContext.setAttached_deposit(toYocto(30));
     item.id = 111111;
-    sellFungibleToken(demoFT);
+    sellMoviePoster(demoFT);
 
-    fts = fetchFungibleTokenListByAccountId(accountId);
+    fts = fetchMovieListByAccountId(accountId);
     ftLength = fts.length;
     expect<i32>(ftLength).toBe(1, "length after selling 1st_ft should be 1");
   });
@@ -115,36 +115,36 @@ describe("contract methods", () => {
     //buy 1st ft
     VMContext.setAttached_deposit(toYocto(14));
     item.id = 111111;
-    buyFungibleToken(item);
+    buyMoviePoster(item);
 
-    let fts = fetchFungibleTokenListByAccountId(accountId);
+    let fts = fetchMovieListByAccountId(accountId);
     let ftLength = fts.length;
     expect<i32>(ftLength).toBe(1, "length after buying 1st_ft should be 1");
 
     // buy 2nd ft
     VMContext.setAttached_deposit(toYocto(14));
     item.id = 222222;
-    buyFungibleToken(item);
+    buyMoviePoster(item);
 
-    fts = fetchFungibleTokenListByAccountId(accountId);
+    fts = fetchMovieListByAccountId(accountId);
     ftLength = fts.length;
     expect<i32>(ftLength).toBe(2, "length after buying 2nd_ft should be 2");
 
     //sell 1st ft
     VMContext.setAttached_deposit(toYocto(30));
     item.id = 111111;
-    sellFungibleToken(demoFT);
+    sellMoviePoster(demoFT);
 
-    fts = fetchFungibleTokenListByAccountId(accountId);
+    fts = fetchMovieListByAccountId(accountId);
     ftLength = fts.length;
     expect<i32>(ftLength).toBe(1, "length after selling 1st_ft should be 1");
 
     //sell 2nd ft
     VMContext.setAttached_deposit(toYocto(30));
     item.id = 222222;
-    sellFungibleToken(demoFT);
+    sellMoviePoster(demoFT);
 
-    fts = fetchFungibleTokenListByAccountId(accountId);
+    fts = fetchMovieListByAccountId(accountId);
     ftLength = fts.length;
     expect<i32>(ftLength).toBe(0, "length after selling 2nd_ft should be 0");
   });

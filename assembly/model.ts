@@ -13,8 +13,8 @@ export const message = "This is the near protocol smart contract tutorial.";
 // ft_set = {"accountId-id"}
 const ft_set = new PersistentSet<string>("s");
 
-// ft_uMap = {"accountId": FungibleToken[]}
-let ft_uMap = new PersistentUnorderedMap<string, FungibleToken[]>("u");
+// ft_uMap = {"accountId": MoviePoster[]}
+let ft_uMap = new PersistentUnorderedMap<string, MoviePoster[]>("u");
 
 @nearBindgen
 export class Item {
@@ -26,7 +26,7 @@ export class Item {
 }
 
 @nearBindgen
-export class FungibleToken {
+export class MoviePoster {
   item: Item;
   price: Amount;
   created_at: string;
@@ -44,18 +44,18 @@ export class FungibleToken {
     beneficiary.transfer(funds);
   }
 
-  // private method used by buy_fungible_token(item: Item): FungibleToken {}
+  // private method used by buy_movie_poster(item: Item): MoviePoster {}
   private static create_fungible_token(
     item: Item,
     blockTimestamp: string
-  ): FungibleToken {
+  ): MoviePoster {
     const attachedDepositInYoctoNear = context.attachedDeposit;
 
     logging.log(
       `attachedDepositInYoctoNear is ${attachedDepositInYoctoNear} yN`
     );
 
-    return new FungibleToken(item, attachedDepositInYoctoNear, blockTimestamp);
+    return new MoviePoster(item, attachedDepositInYoctoNear, blockTimestamp);
   }
 
   // private method that returns a string
@@ -64,7 +64,7 @@ export class FungibleToken {
   }
 
   // public method to fetch a list of fungible token by id
-  public static getFTListByAccountId(accountId: AccountId): FungibleToken[] {
+  public static getMovieListByAccountId(accountId: AccountId): MoviePoster[] {
     assert(
       accountId.length > 0,
       "Sender is required, put your account ID as sender!"
@@ -78,7 +78,7 @@ export class FungibleToken {
 
   // public method to buy a fungible token
   @mutateState()
-  public static buy_fungible_token(item: Item): FungibleToken {
+  public static buy_movie_poster(item: Item): MoviePoster {
     const sender = context.sender;
     const contractName = context.contractName;
     const depositInYoctoNear = context.attachedDeposit;
@@ -134,7 +134,7 @@ export class FungibleToken {
     return ft;
   }
 
-  // private method used by sell_fungible_token(ft: FungibleToken): void {} to calculate selling price of a fungible token
+  // private method used by sell_movie_poster(ft: MoviePoster): void {} to calculate selling price of a fungible token
   private static calculateSellPrice(price: Amount): Amount {
     // let itemPriceInYoctoNear = u128.mul(price, u128.fromF32(2));
     let itemPriceInYoctoNear = price;
@@ -143,7 +143,7 @@ export class FungibleToken {
   }
 
   @mutateState()
-  public static sell_fungible_token(ft: FungibleToken): void {
+  public static sell_movie_poster(ft: MoviePoster): void {
     const seller = context.sender;
     const buyer = context.contractName;
 
@@ -175,7 +175,7 @@ export class FungibleToken {
     */
     if (isSender) {
       const seller_fts = ft_uMap.getSome(seller);
-      let updatedFTs = new Array<FungibleToken>();
+      let updatedFTs = new Array<MoviePoster>();
 
       for (let i = 0; i < seller_fts.length; i++) {
         if (seller_fts[i].item.id != ft.item.id) {
